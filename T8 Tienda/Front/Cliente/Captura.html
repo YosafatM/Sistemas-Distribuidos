@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Tarea 8</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script src='./WSClient.js'></script>
+    <script>
+        var foto = null;
+        function get(id) {
+            return document.getElementById(id);
+        }
+        function readSingleFile(files, imagen) {
+            var file = files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imagen.src = reader.result;
+                // reader.result incluye al principio: "data:image/jpeg;base64,"
+                foto = reader.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+        function alta() {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            // Da de alta el articulo
+            cliente.post("alta_articulo",
+                {
+                    articulo:
+                    {
+                        nombre: get("Nombre").value,
+                        precio: get("Precio").value,
+                        cantidad: get("Cantidad").value,
+                        descripcion: get("Descripcion").value,
+                        foto: foto
+                    }
+                },
+                function (code, result) {
+                    if (code == 200){
+                        alert("El articulo se dio de alta");  
+                        limpiar();
+                    } 
+                    else
+                        alert(JSON.stringify(result));
+                });
+        }
+        function limpiar(){
+            get("Nombre").value="";
+            get("Precio").value="";
+            get("Cantidad").value="";
+            get("Descripcion").value="";
+            get("alta_imagen").src="images/noImg.jpeg";
+        }
+    </script>
+</head>
+<!-- body -->
+
+<body class="main-layout">
+    <!-- loader  -->
+    <!-- end loader -->
+    <!-- header -->
+    <header id="home">
+        <!-- header inner -->
+        <div class="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <div class="menu-area">
+                            <div class="limit-box">
+                                <nav class="main-menu">
+                                    <ul class="menu-area-main">
+                                        <li class="active"><a href="index.html">Inicio</a></li>
+                                        <li class="active"><a href="Captura.html">Captura de artículo</a></li>
+                                        <li><a href="Compra.html">Compra de artículos</a></li>
+                                        <li><a href="Carrito.html">Carrito</a></li>
+                                        <li></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end header inner -->
+    </header>
+    <!-- end header -->
+
+    <!-- section -->
+    <div id="contact" class="section layout_padding">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-4 padding_left_0">
+                </div>
+
+                <div class="col-md-6 ">
+                    <div class="heading " >
+                        <h2><strong>Capturar artículo</strong></h2>
+                    </div>
+                    <div class="full margin_top_20">
+                        <form>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p>Nombre del artículo</p>
+                                    <input class="form-control" id="Nombre" placeholder="Nombre del artículo" type="text"
+                                        required="">
+                                </div>
+                                <div class="col-sm-12">
+                                    <p>Precio</p>
+                                    <input class="form-control" id="Precio" placeholder="Precio" type="text" required="">
+                                </div>
+                                <div class="col-sm-12">
+                                    <p>Cantidad en almacen</p>
+                                    <input class="form-control" id="Cantidad" placeholder="Cantidad en almacen" type="number"
+                                        required="">
+                                </div>
+                                <div class="col-sm-12">
+                                    <p>Descripcion</p>
+                                    <textarea class="form-control textarea" id="Descripcion"
+                                        placeholder="Descripción del artículo"></textarea>
+                                </div>
+                                <div class="col-sm-12">
+                                    <img id="alta_imagen" width="200px" src="images/noImg.jpeg"><br>
+                                    <input type="file" onchange="readSingleFile(files,get('alta_imagen'))"
+                                        multiple="false" accept="image/*" /><br><br>
+                                </div>
+                            </div>
+                            <button class="main_bt" type="button" onclick="alta()">Subir</button>
+                        </form>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- end section -->
+
+    <!-- Javascript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/plugin.js"></script>
+
+    <!-- sidebar -->
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/custom.js"></script>
+</body>
+
+</html>

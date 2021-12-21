@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Tarea 8</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script src='./WSClient.js'></script>
+    <script>
+        function get(id) {
+            return document.getElementById(id);
+        }
+
+        function agrega_carrito(id){
+            let i = id.slice(5);
+            console.log(i);
+            let cliente = new WSClient("/Servicio/rest/ws");
+            let numero=get("input_carrito"+i).value;
+            console.log(numero);
+            cliente.post("alta_carrito",
+            {
+                id_a:i,
+                num:numero
+            },
+            function (code, result) {
+                if (code == 200){
+                    alert("El articulo se agrego al carrito");  
+                } 
+                else
+                    alert(JSON.stringify(result));
+            });
+            
+        }
+
+        function muestra_articulos() {
+            let cliente = new WSClient("/Servicio/rest/ws");
+
+            cliente.post("consulta_articulo",
+                { palabra: get("articuloBuscar").value },
+                function (code, result) {
+                    if (code == 200) {
+                        var count = Object.keys(result).length;
+                        for (var i = 0; i < count; i++) {
+                            jQuery('<div>', {
+                                id: 'tarjeta_muestra' + i,
+                                class: 'col-md-4 margin_top_30'
+                            }).appendTo('#tabla');
+
+                            jQuery('<div>', {
+                                id: 'aux1_'+i,
+                                class:'full',
+                                style: 'overflow: hidden;'
+                            }).appendTo('#tarjeta_muestra'+i);
+
+                            jQuery('<div>', {
+                                id: 'aux2_'+i,
+                                class: 'full bl'
+                            }).appendTo('#aux1_'+i);
+
+                            jQuery('<img>', {
+                                id: 'imagen_muestra'+i,
+                                class: 'img-responsive',
+                                alt: '#',
+                                style: 'max-width: 350px;',
+                                style: 'max-height: 350px;'
+                            }).appendTo('#aux2_'+i);
+
+                            jQuery('<div>', {
+                                id: 'aux3_'+i,
+                                class: 'full blog_blue text_align_center'
+                            }).appendTo('#aux1_'+i);
+
+                            jQuery('<h3>', {
+                                id: 'nombre_muestra'+i,
+                                class: 'white_font'
+                            }).appendTo('#aux3_'+i);
+
+                            jQuery('<h3>', {
+                                id: 'precio_muestra'+i,
+                                class: 'white_font'
+                            }).appendTo('#aux3_'+i);
+
+                            jQuery('<p>', {
+                                id: 'descripcion_muestra'+i,
+                                class: 'white_font'
+                            }).appendTo('#aux3_'+i);
+
+                            jQuery('<input>', {
+                                id: 'input_carrito'+i,
+                                size:12,
+                                type: 'number',
+                                value:"1"
+                            }).appendTo('#aux3_'+i);
+
+                            jQuery('<button>', {
+                                id: 'boton'+i,
+                                type: 'button',
+                                value:'Comprar',
+                                width: 100,
+                                height: 35,
+                            }).appendTo('#aux3_'+i).click(function(){ agrega_carrito(this.id); });
+
+
+                        }
+                        for (var i = 0; i <= count; i++) {
+                            get("nombre_muestra"+i).innerHTML=result[i].nombre;
+                            get("precio_muestra"+i).innerHTML=result[i].precio+"$";
+                            get("descripcion_muestra"+i).innerHTML=result[i].descripcion;
+                            get("imagen_muestra"+i).src="data:image/jpeg;base64,"+result[i].foto;
+                            get("boton"+i).innerHTML="Comprar";
+                        }
+                    }
+                    else
+                        alert(JSON.stringify(result));
+                });
+        }
+    </script>
+</head>
+<!-- body -->
+
+<body class="main-layout">
+    <!-- header -->
+    <header id="home">
+        <!-- header inner -->
+        <div class="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <div class="menu-area">
+                            <div class="limit-box">
+                                <nav class="main-menu">
+                                    <ul class="menu-area-main">
+                                        <li class="active"><a href="index.html">Inicio</a></li>
+                                        <li><a href="Captura.html">Captura de artículo</a></li>
+                                        <li class="active"><a href="Compra.html">Compra de artículos</a></li>
+                                        <li><a href="Carrito.html">Carrito</a></li>
+                                        <li></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end header inner -->
+    </header>
+    <!-- end header -->
+
+    <!-- section -->
+    <div id="blog" class="section dark_bg layout_padding left_white">
+        <div class="heading " >
+            <h2><strong>Comprar articulo</strong></h2>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text_align_center">
+                    <input class="" id="articuloBuscar" placeholder="Artículo a buscar" size=64 type="text" required="">
+                    <a onclick="muestra_articulos()"><img src="images/lupa.png" width="55" height="55" alt="#"></a>
+                </div>
+            </div>
+            <div id="tabla" class="row">
+            </div>
+        </div>
+    </div>
+    <!-- end section -->
+
+    <!-- Javascript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/plugin.js"></script>
+
+    <!-- sidebar -->
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/custom.js"></script>
+</body>
+
+</html>
